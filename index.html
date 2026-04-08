@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rodrigo Norro — Scripts</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+  --bg:      #0a0a0f;
+  --surf:    #111118;
+  --surf2:   #18181f;
+  --border:  #252530;
+  --acc:     #00ff88;
+  --acc2:    #00cc6a;
+  --adim:    rgba(0,255,136,.07);
+  --abrd:    rgba(0,255,136,.2);
+  --text:    #e8e8f0;
+  --muted:   #5a5a6e;
+  --danger:  #ff4466;
+  --warn:    #ffbb33;
+  --glow:    0 0 22px rgba(0,255,136,.15);
+  --mono:    'JetBrains Mono', monospace;
+  --disp:    'Syne', sans-serif;
+  --read:    'Lora', Georgia, serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:var(--mono);background:var(--bg);color:var(--text);}
+
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(0,255,136,.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,136,.022) 1px,transparent 1px);
+  background-size:32px 32px;
+  pointer-events:none;z-index:0;
+}
+
+/* ── SCREENS ── */
+.sc{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;}
+.sc.on{display:flex;animation:fi .28s ease;}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARD (gate) ── */
+.card{
+  background:var(--surf);border:1px solid var(--border);
+  border-radius:14px;padding:34px 30px;
+  width:100%;max-width:385px;margin:14px;
+  animation:su .32s ease;position:relative;z-index:1;
+}
+
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:28px;}
+.blogo{
+  width:44px;height:44px;border-radius:10px;
+  background:var(--acc);color:#0a0a0f;
+  font-family:var(--disp);font-weight:800;font-size:.88rem;
+  display:flex;align-items:center;justify-content:center;
+  letter-spacing:-.5px;flex-shrink:0;
+  box-shadow:0 0 22px rgba(0,255,136,.25);
+}
+.binfo strong{display:block;font-family:var(--disp);font-weight:700;font-size:1.05rem;}
+.binfo small{font-size:.62rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+
+/* ── FORM ── */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:11px;}
+label,.flbl{font-size:.63rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);}
+
+input[type=password],input[type=text],textarea,select{
+  background:var(--surf2);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:var(--mono);font-size:.84rem;
+  padding:10px 13px;outline:none;width:100%;
+  transition:border-color .17s,box-shadow .17s;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--acc);box-shadow:var(--glow);}
+input::placeholder,textarea::placeholder{color:var(--muted);}
+
+.slug-row{
+  display:flex;align-items:center;
+  background:var(--surf2);border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;
+  transition:border-color .17s,box-shadow .17s;
+}
+.slug-row:focus-within{border-color:var(--acc);box-shadow:var(--glow);}
+.slug-pfx{padding:10px 8px 10px 13px;color:var(--muted);font-size:.78rem;flex-shrink:0;}
+.slug-row input{border:none;background:transparent;border-radius:0;box-shadow:none !important;padding:10px 13px 10px 0;flex:1;}
+
+.sbar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.sbar-f{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0;}
+
+/* ── BUTTONS ── */
+.btn{
+  font-family:var(--disp);font-weight:600;
+  font-size:.82rem;letter-spacing:.04em;
+  padding:10px 18px;border-radius:8px;border:none;
+  cursor:pointer;transition:all .16s;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  white-space:nowrap;
+}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none !important;}
+.bp{background:var(--acc);color:#0a0a0f;}
+.bp:hover:not(:disabled){background:var(--acc2);transform:translateY(-1px);box-shadow:0 4px 18px rgba(0,255,136,.28);}
+.bp:active:not(:disabled){transform:translateY(0);}
+.bg{background:transparent;border:1px solid var(--border);color:var(--text);}
+.bg:hover:not(:disabled){border-color:var(--acc);color:var(--acc);}
+.bd{background:transparent;border:1px solid rgba(255,68,102,.35);color:var(--danger);}
+.bd:hover:not(:disabled){background:rgba(255,68,102,.07);}
+.bsm{padding:6px 11px;font-size:.72rem;}
+.bfull{width:100%;}
+
+/* ── ERR / INFO ── */
+.err{
+  background:rgba(255,68,102,.07);border:1px solid rgba(255,68,102,.25);
+  color:var(--danger);border-radius:8px;
+  padding:9px 13px;font-size:.75rem;margin-top:9px;display:none;
+}
+.err.on{display:block;animation:su .2s ease;}
+.ibox{
+  background:var(--adim);border:1px solid var(--abrd);
+  border-radius:8px;padding:11px 13px;
+  font-size:.72rem;line-height:1.65;color:var(--text);
+}
+.ibox strong{color:var(--acc);}
+
+/* ── SPINNER ── */
+.spin{
+  width:13px;height:13px;
+  border:2px solid rgba(10,10,15,.35);
+  border-top-color:currentColor;
+  border-radius:50%;animation:sp .6s linear infinite;display:none;
+}
+.spin.on{display:inline-block;}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ══════════════════════════════
+   NO-CONFIG SCREEN
+══════════════════════════════ */
+#s-noconfig{align-items:center;justify-content:center;background:var(--bg);}
+.setup-steps{counter-reset:st;list-style:none;display:flex;flex-direction:column;gap:9px;margin:14px 0 16px;}
+.setup-steps li{counter-increment:st;display:flex;gap:11px;align-items:flex-start;font-size:.77rem;line-height:1.65;}
+.setup-steps li::before{
+  content:counter(st);width:21px;height:21px;border-radius:50%;
+  background:var(--acc);color:#0a0a0f;font-family:var(--disp);font-weight:700;
+  font-size:.68rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.setup-steps a{color:var(--acc);text-decoration:none;}
+.setup-steps a:hover{text-decoration:underline;}
+.ci{
+  font-family:var(--mono);background:var(--surf2);border:1px solid var(--border);
+  border-radius:4px;padding:1px 6px;font-size:.78em;color:var(--acc);
+}
+.code-block{
+  background:var(--surf2);border:1px solid var(--border);border-radius:8px;
+  padding:12px 14px;font-family:var(--mono);font-size:.74rem;
+  line-height:1.8;margin:12px 0 14px;overflow-x:auto;
+}
+
+/* ══════════════════════════════
+   GATE SCREEN
+══════════════════════════════ */
+#s-gate{align-items:center;justify-content:center;background:var(--bg);}
+
+/* ══════════════════════════════
+   APP SCREEN
+══════════════════════════════ */
+#s-app{background:var(--bg);}
+
+.topbar{
+  height:50px;flex-shrink:0;
+  background:rgba(10,10,15,.92);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+  display:flex;align-items:center;padding:0 12px;gap:8px;z-index:30;
+}
+.tb-brand{display:flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:700;font-size:.88rem;}
+.tb-logo{
+  width:28px;height:28px;border-radius:6px;background:var(--acc);color:#0a0a0f;
+  font-weight:800;font-size:.65rem;display:flex;align-items:center;justify-content:center;
+}
+.tb-sp{flex:1;}
+
+.app-body{display:flex;flex:1;min-height:0;overflow:hidden;position:relative;}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;flex-shrink:0;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+  background:rgba(10,10,15,.3);
+}
+.sb-head{
+  padding:9px 9px 8px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:6px;
+}
+.sb-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);flex:1;}
+.sb-list{flex:1;overflow-y:auto;padding:5px;}
+.sb-list::-webkit-scrollbar{width:2px;}
+.sb-list::-webkit-scrollbar-thumb{background:var(--border);}
+.sb-empty{padding:22px 12px;text-align:center;color:var(--muted);font-size:.72rem;line-height:1.7;}
+
+.sbi{
+  padding:9px 10px;border-radius:7px;cursor:pointer;
+  border:1px solid transparent;transition:background .13s;margin-bottom:2px;
+}
+.sbi:hover{background:var(--surf2);}
+.sbi.active{background:var(--adim);border-color:var(--abrd);}
+.sbi-t{font-size:.78rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sbi-s{font-size:.62rem;color:var(--acc);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sbi-d{font-size:.59rem;color:var(--muted);margin-top:1px;}
+
+/* MAIN PANE */
+.main-pane{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.main-pane::-webkit-scrollbar{width:4px;}
+.main-pane::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+.ed-empty{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;color:var(--muted);text-align:center;gap:9px;padding:40px;
+}
+.ed-empty .ico{font-size:2.3rem;opacity:.4;}
+.ed-empty p{font-size:.77rem;line-height:1.7;}
+
+/* EDITOR */
+.editor{padding:20px 22px 48px;max-width:680px;width:100%;}
+
+.sec-lbl{
+  font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);
+  display:flex;align-items:center;gap:5px;margin-bottom:5px;
+}
+.sec-lbl::before{content:'';width:2px;height:11px;background:var(--acc);border-radius:2px;}
+
+.ed-2col{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;}
+.ed-2col-sm{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+textarea.ta{min-height:240px;resize:vertical;line-height:1.8;font-size:.83rem;tab-size:2;}
+.char-c{font-size:.61rem;color:var(--muted);text-align:right;margin-top:3px;}
+
+.act-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:13px;}
+
+/* SHARE PANEL */
+.share-panel{
+  background:var(--adim);border:1px solid var(--abrd);
+  border-radius:10px;padding:17px 19px;margin-top:13px;display:none;
+}
+.share-panel.on{display:block;animation:su .22s ease;}
+.sp-ttl{
+  font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--acc);margin-bottom:12px;
+  display:flex;align-items:center;gap:5px;
+}
+.sp-ttl::before{content:'';width:2px;height:11px;background:var(--acc);border-radius:2px;}
+
+.url-row{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surf2);border:1px solid var(--border);
+  border-radius:8px;padding:9px 12px;margin-top:11px;
+}
+.url-txt{flex:1;font-size:.71rem;word-break:break-all;line-height:1.5;}
+.sp-note{font-size:.67rem;color:var(--muted);line-height:1.6;margin-top:9px;}
+.sp-note strong{color:var(--acc);}
+
+/* hint tag */
+.hint{
+  background:rgba(255,187,51,.07);border:1px solid rgba(255,187,51,.25);
+  color:var(--warn);border-radius:7px;
+  padding:8px 12px;font-size:.68rem;line-height:1.6;margin-top:9px;
+}
+
+/* ══════════════════════════════
+   READER SCREEN
+══════════════════════════════ */
+#s-reader{background:var(--bg);}
+
+.rgate{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;}
+
+.rtb{
+  height:48px;flex-shrink:0;
+  background:rgba(10,10,15,.95);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+  display:flex;align-items:center;padding:0 12px;gap:10px;z-index:20;
+}
+.rtb-t{
+  flex:1;font-family:var(--disp);font-weight:700;font-size:.88rem;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+.fctrl{display:flex;gap:4px;}
+.fbtn{
+  width:28px;height:28px;background:var(--surf2);border:1px solid var(--border);
+  border-radius:5px;color:var(--text);cursor:pointer;
+  font-family:var(--mono);font-size:.7rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .13s,color .13s;
+}
+.fbtn:hover{border-color:var(--acc);color:var(--acc);}
+
+.rprog{height:2px;background:var(--border);flex-shrink:0;}
+.rprog-f{height:100%;background:var(--acc);width:0;transition:width .1s;}
+
+.rbody{flex:1;overflow-y:auto;padding:18px 14px 80px;}
+.rbody::-webkit-scrollbar{width:3px;}
+.rbody::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+.rinner{max-width:520px;margin:0 auto;}
+
+/* Script rendering */
+.sout{font-family:var(--read);font-size:15px;line-height:1.9;color:var(--text);}
+.sh{
+  font-family:var(--disp);font-weight:700;
+  font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--acc);border-top:1px solid rgba(0,255,136,.12);
+  padding-top:20px;margin-top:24px;margin-bottom:11px;
+}
+.sh:first-child{border-top:none;padding-top:0;margin-top:0;}
+.shr{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.sbul{display:flex;gap:9px;padding:2px 0;}
+.smark{color:var(--acc);flex-shrink:0;font-family:var(--mono);font-size:.85em;margin-top:.1em;}
+.sp2{margin:0 0 7px;}
+.sg{height:5px;}
+
+/* ── DIALOG ── */
+.dlg-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.65);
+  z-index:100;display:none;align-items:center;justify-content:center;
+}
+.dlg-bg.on{display:flex;}
+.dlg{
+  background:var(--surf);border:1px solid var(--border);
+  border-radius:12px;padding:26px 22px;
+  max-width:288px;width:90%;text-align:center;animation:su .2s ease;
+}
+.dlg h3{font-family:var(--disp);margin-bottom:7px;font-size:1rem;}
+.dlg p{font-size:.76rem;color:var(--muted);margin-bottom:17px;line-height:1.6;}
+.dlg-btns{display:flex;gap:8px;justify-content:center;}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:18px;left:50%;
+  transform:translateX(-50%) translateY(60px);
+  background:var(--surf);border:1px solid var(--acc);color:var(--acc);
+  padding:8px 18px;border-radius:7px;font-size:.74rem;z-index:200;
+  transition:transform .26s;white-space:nowrap;
+}
+.toast.on{transform:translateX(-50%) translateY(0);}
+
+/* ── COLOR TAGS ── */
+.ct-g{background:rgba(0,255,136,.13);color:#00ff88;border-radius:3px;padding:1px 3px;}
+.ct-c{background:rgba(255,170,0,.13);color:#ffaa00;border-radius:3px;padding:1px 3px;}
+.ct-y{background:rgba(255,230,0,.15);color:#ffe000;border-radius:3px;padding:1px 3px;}
+.ct-r{background:rgba(255,68,102,.13);color:#ff6080;border-radius:3px;padding:1px 3px;}
+
+/* ── COLOR TOOLBAR ── */
+.ctb{
+  display:flex;align-items:center;gap:5px;flex-wrap:wrap;
+  background:var(--surf2);border:1px solid var(--border);
+  border-bottom:none;border-radius:8px 8px 0 0;
+  padding:7px 10px;
+}
+.ctb-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-right:4px;}
+.ctb-sep{width:1px;height:16px;background:var(--border);margin:0 3px;}
+.cbtn{
+  font-family:var(--disp);font-weight:700;font-size:.68rem;
+  padding:4px 10px;border-radius:5px;border:none;cursor:pointer;
+  transition:opacity .15s,transform .12s;
+  display:flex;align-items:center;gap:4px;
+}
+.cbtn:hover{opacity:.8;transform:translateY(-1px);}
+.cbtn:active{transform:translateY(0);}
+.cbtn-g{background:rgba(0,255,136,.15);color:#00ff88;border:1px solid rgba(0,255,136,.3);}
+.cbtn-c{background:rgba(255,170,0,.15);color:#ffaa00;border:1px solid rgba(255,170,0,.3);}
+.cbtn-y{background:rgba(255,230,0,.15);color:#ffe000;border:1px solid rgba(255,230,0,.3);}
+.cbtn-r{background:rgba(255,68,102,.15);color:#ff6080;border:1px solid rgba(255,68,102,.3);}
+.cbtn-x{background:var(--surf2);color:var(--muted);border:1px solid var(--border);font-size:.65rem;}
+.ta-nc{border-radius:0 0 8px 8px !important;}
+
+/* ── READER NAV ── */
+.rnav{
+  flex-shrink:0;
+  border-bottom:1px solid var(--border);
+  background:rgba(10,10,15,.85);
+  backdrop-filter:blur(10px);
+  position:relative;z-index:15;
+}
+.rnav-btn{
+  display:flex;align-items:center;gap:7px;
+  padding:9px 14px;cursor:pointer;
+  font-family:var(--mono);font-size:.72rem;color:var(--text);
+  user-select:none;
+  transition:background .13s;
+  width:100%;border:none;background:transparent;text-align:left;
+}
+.rnav-btn:hover{background:var(--surf2);}
+.rnav-arr{
+  color:var(--acc);font-size:.7rem;
+  transition:transform .2s;flex-shrink:0;
+}
+.rnav-arr.open{transform:rotate(180deg);}
+.rnav-count{
+  background:var(--adim);border:1px solid var(--abrd);
+  color:var(--acc);font-size:.58rem;
+  border-radius:10px;padding:1px 7px;
+  font-family:var(--mono);
+}
+.rnav-drop{
+  display:none;
+  border-top:1px solid var(--border);
+  max-height:240px;overflow-y:auto;
+}
+.rnav-drop.open{display:block;animation:su .15s ease;}
+.rnav-drop::-webkit-scrollbar{width:3px;}
+.rnav-drop::-webkit-scrollbar-thumb{background:var(--border);}
+.rnav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 16px;cursor:pointer;
+  font-size:.76rem;line-height:1.4;
+  transition:background .12s;
+  border:none;background:transparent;color:var(--text);
+  width:100%;text-align:left;
+}
+.rnav-item:hover{background:var(--surf2);}
+.rnav-num{
+  font-family:var(--mono);font-size:.6rem;
+  color:var(--muted);flex-shrink:0;width:16px;
+  text-align:right;
+}
+.rnav-empty{padding:12px 16px;font-size:.72rem;color:var(--muted);}
+
+/* ── RESPONSIVE ── */
+.mob-btn{display:none;}
+
+@media(max-width:600px){
+  .sidebar{
+    position:absolute;left:0;top:50px;bottom:0;z-index:20;
+    transform:translateX(-100%);transition:transform .22s;
+    background:var(--bg);box-shadow:4px 0 22px rgba(0,0,0,.6);
+  }
+  .sidebar.open{transform:translateX(0);}
+  .mob-btn{display:flex;}
+  .editor{padding:14px 13px 48px;}
+  .ed-2col,.ed-2col-sm{grid-template-columns:1fr;}
+  .card{padding:26px 20px;}
+}
+@media(max-width:380px){
+  .sidebar{width:195px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ NO CONFIG SCREEN ══════════════ -->
+<div id="s-noconfig" class="sc">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:14px;overflow-y:auto;">
+    <div class="card" style="max-width:460px;">
+      <div class="brand">
+        <div class="blogo">RN</div>
+        <div class="binfo">
+          <strong>Rodrigo Norro</strong>
+          <small>Scripts de ventas</small>
+        </div>
+      </div>
+
+      <div class="ibox" style="margin-bottom:14px;">
+        <strong>Configuración requerida</strong><br>
+        Necesitás una base de datos Supabase (gratis) — PostgreSQL real, rápida y confiable.
+      </div>
+
+      <ol class="setup-steps">
+        <li>Creá cuenta gratis en <a href="https://supabase.com" target="_blank">supabase.com</a> → <strong>New project</strong><br>
+            Nombre: <strong>rn-scripts</strong> · elegí cualquier región · poné una contraseña de DB → <strong>Create project</strong></li>
+        <li>En el panel: menú izquierdo → <strong>SQL Editor</strong> → pegá este SQL y ejecutalo:<br>
+            <span class="ci">create table scripts (slug text primary key, tn text, p text, s text, cr bigint, up bigint);</span><br>
+            <span class="ci">create table config (key text primary key, val text);</span><br>
+            Luego ejecutá también:<br>
+            <span class="ci">alter table scripts enable row level security;</span><br>
+            <span class="ci">create policy "public" on scripts for all using (true) with check (true);</span><br>
+            <span class="ci">alter table config enable row level security;</span><br>
+            <span class="ci">create policy "public" on config for all using (true) with check (true);</span>
+        </li>
+        <li>Menú izquierdo → <strong>Project Settings</strong> → <strong>API</strong><br>
+            Copiá la <strong>Project URL</strong> y la <strong>anon public</strong> key</li>
+        <li>Abrí este archivo HTML con el Bloc de Notas y reemplazá estas líneas:</li>
+      </ol>
+
+      <div class="code-block">
+        const SB_URL &nbsp;= <span style="color:var(--acc)">'https://xxxx.supabase.co'</span>;<br>
+        const SB_KEY &nbsp;= <span style="color:var(--acc)">'eyJh...'</span>;
+      </div>
+
+      <div class="ibox" style="font-size:.69rem;">
+        Subí el archivo a <a href="https://app.netlify.com/drop" target="_blank" style="color:var(--acc)">Netlify Drop</a>
+        (arrastrar y soltar) y obtenés una URL fija gratis.<br>
+        Supabase es PostgreSQL real — rápido, sin límites de requests, sin CORS, con 500MB gratis.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ GATE SCREEN ══════════════ -->
+<div id="s-gate" class="sc">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:14px;">
+    <div class="card">
+      <div class="brand">
+        <div class="blogo">RN</div>
+        <div class="binfo">
+          <strong>Rodrigo Norro</strong>
+          <small>Scripts de ventas</small>
+        </div>
+      </div>
+
+      <!-- LOADING (while checking cloud) -->
+      <div id="g-loading" style="text-align:center;padding:18px 0;">
+        <div class="spin on" style="margin:0 auto 10px;width:18px;height:18px;border-color:var(--border);border-top-color:var(--acc);"></div>
+        <div style="font-size:.72rem;color:var(--muted);">Conectando con la nube...</div>
+      </div>
+
+      <!-- SETUP (first time) -->
+      <div id="g-setup" style="display:none">
+        <div class="flbl" style="margin-bottom:12px;">Primera vez — creá tu contraseña maestra</div>
+        <div class="fg">
+          <label>Nueva contraseña</label>
+          <input type="password" id="gsp" placeholder="Mínimo 6 caracteres..."
+            oninput="strength(this,'gspb')">
+          <div class="sbar"><div class="sbar-f" id="gspb"></div></div>
+        </div>
+        <div class="fg">
+          <label>Confirmar contraseña</label>
+          <input type="password" id="gsp2" placeholder="Repetí la contraseña..."
+            onkeydown="if(event.key==='Enter')doSetup()">
+        </div>
+        <div class="ibox" style="margin:9px 0 13px;font-size:.69rem;">
+          Protege toda tu app. <strong>Guardala bien — no se puede recuperar.</strong>
+        </div>
+        <button class="btn bp bfull" onclick="doSetup()">
+          <span class="spin" id="gss"></span>Crear y entrar
+        </button>
+        <div class="err" id="gse"></div>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="g-login" style="display:none">
+        <div class="flbl" style="margin-bottom:12px;">Acceso privado</div>
+        <div class="fg">
+          <label>Contraseña maestra</label>
+          <input type="password" id="glp" placeholder="Tu contraseña..."
+            onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <button class="btn bp bfull" style="margin-top:4px" onclick="doLogin()">
+          <span class="spin" id="gls"></span>🔓 Entrar
+        </button>
+        <div class="err" id="gle"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ APP SCREEN ══════════════ -->
+<div id="s-app" class="sc">
+  <div class="topbar">
+    <button class="btn bg bsm mob-btn" style="padding:6px 9px;" onclick="toggleSb()">☰</button>
+    <div class="tb-brand">
+      <div class="tb-logo">RN</div>
+      Rodrigo Norro
+    </div>
+    <div class="tb-sp"></div>
+    <button class="btn bg bsm" onclick="newScript()">+ Nuevo</button>
+    <button class="btn bg bsm" onclick="reqLogout()">Salir</button>
+  </div>
+
+  <div class="app-body">
+    <div class="sidebar" id="sb">
+      <div class="sb-head">
+        <span class="sb-lbl">Mis scripts</span>
+        <button class="btn bg" style="padding:4px 9px;font-size:.65rem;" onclick="newScript()">+</button>
+      </div>
+      <div class="sb-list" id="sb-list">
+        <div class="sb-empty" id="sb-empty">Sin scripts aún.<br>Creá el primero →</div>
+      </div>
+    </div>
+    <div class="main-pane" id="main-pane">
+      <!-- Editor rendered here by JS -->
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ READER SCREEN ══════════════ -->
+<div id="s-reader" class="sc">
+
+  <!-- Password gate -->
+  <div id="r-gate" class="rgate">
+    <div class="card">
+      <div class="brand">
+        <div class="blogo">RN</div>
+        <div class="binfo">
+          <strong>Rodrigo Norro</strong>
+          <small id="r-slug-lbl" style="color:var(--acc)">script</small>
+        </div>
+      </div>
+      <div class="flbl" style="margin-bottom:12px;">Script protegido — ingresá la contraseña</div>
+      <div class="fg">
+        <label>Contraseña del script</label>
+        <input type="password" id="rpass" placeholder="Contraseña..."
+          onkeydown="if(event.key==='Enter')doReaderDecrypt()">
+      </div>
+      <button class="btn bp bfull" style="margin-top:4px" onclick="doReaderDecrypt()">
+        <span class="spin" id="rps"></span>🔓 Ver script
+      </button>
+      <div class="err" id="rpe"></div>
+    </div>
+  </div>
+
+  <!-- Reading view -->
+  <div id="r-view" style="display:none;flex-direction:column;flex:1;min-height:0;">
+    <div class="rtb">
+      <div class="rtb-t" id="r-title">—</div>
+      <div class="fctrl">
+        <button class="fbtn" onclick="adjFont(-1)" title="Texto más chico">A−</button>
+        <button class="fbtn" onclick="adjFont(1)"  title="Texto más grande">A+</button>
+        <button class="fbtn" onclick="copyRTxt()"  title="Copiar texto">⎘</button>
+      </div>
+    </div>
+    <div class="rprog"><div class="rprog-f" id="rpf"></div></div>
+    <div class="rnav" id="rnav">
+      <button class="rnav-btn" onclick="toggleNav()">
+        <span style="color:var(--acc);font-size:.8rem;">≡</span>
+        <span style="flex:1">Secciones</span>
+        <span class="rnav-count" id="rnav-count">0</span>
+        <span class="rnav-arr" id="rnav-arr">▾</span>
+      </button>
+      <div class="rnav-drop" id="rnav-drop">
+        <div class="rnav-empty" id="rnav-empty">Sin secciones</div>
+      </div>
+    </div>
+    <div class="rbody" id="rbody" onscroll="updProg()">
+      <div class="rinner">
+        <div class="sout" id="sout"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════ DIALOG ══════════════ -->
+<div class="dlg-bg" id="dlg-bg">
+  <div class="dlg">
+    <h3 id="dlg-t">Confirmar</h3>
+    <p id="dlg-m"></p>
+    <div class="dlg-btns">
+      <button class="btn bg bsm" onclick="closeDlg()">Cancelar</button>
+      <button class="btn bd bsm" id="dlg-ok">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════ -->
+<script>
+// ╔══════════════════════════════════╗
+// ║  CONFIGURACIÓN — EDITÁ ESTO      ║
+// ╚══════════════════════════════════╝
+const SB_URL  = 'https://oykvlhbdlocplftzznfs.supabase.co';       // ej: https://xxxx.supabase.co
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95a3ZsaGJkbG9jcGxmdHp6bmZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNDAwNzcsImV4cCI6MjA5MDkxNjA3N30.Ldkqv_TJmF8LCuJUyTuwqzPg7vIc47cR5Zr5onVrNlE'; // anon/public key
+// ═══════════════════════════════════
+
+const IS_CFG = !SB_URL.includes('PEGAR') && !SB_KEY.includes('PEGAR');
+const SALT   = 'rn-scripts-v3-a9K';
+let MPASS    = null;  // master password (session only)
+
+// ══════════════════════════════════
+//  CRYPTO — AES-256-GCM + PBKDF2
+// ══════════════════════════════════
+const TE = new TextEncoder();
+const TD = new TextDecoder();
+
+async function sha256(s){
+  const b = await crypto.subtle.digest('SHA-256', TE.encode(s));
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+async function dk(pass, salt){
+  const km = await crypto.subtle.importKey('raw', TE.encode(pass), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    {name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'},
+    km, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']
+  );
+}
+
+async function aesEnc(text, pass){
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv   = crypto.getRandomValues(new Uint8Array(12));
+  const key  = await dk(pass, salt);
+  const ct   = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, TE.encode(text));
+  const out  = new Uint8Array(16 + 12 + ct.byteLength);
+  out.set(salt, 0); out.set(iv, 16); out.set(new Uint8Array(ct), 28);
+  return b64e(out);
+}
+
+async function aesDec(b64, pass){
+  const bytes = b64d(b64);
+  const key   = await dk(pass, bytes.slice(0,16));
+  const pt    = await crypto.subtle.decrypt({name:'AES-GCM', iv:bytes.slice(16,28)}, key, bytes.slice(28));
+  return TD.decode(pt);
+}
+
+function b64e(u8){
+  let s=''; for(const b of u8) s+=String.fromCharCode(b);
+  return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function b64d(s){
+  s=s.replace(/-/g,'+').replace(/_/g,'/');
+  while(s.length%4) s+='=';
+  return Uint8Array.from(atob(s), c=>c.charCodeAt(0));
+}
+
+// ══════════════════════════════════
+//  SUPABASE REST API
+//  PostgreSQL real, sin CORS, rápido.
+//  Cada script = una fila en la tabla.
+// ══════════════════════════════════
+
+const SB_HEADERS = ()=>({
+  'apikey': SB_KEY,
+  'Authorization': 'Bearer '+SB_KEY,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+});
+
+// Local cache: evita fetches redundantes en la misma sesión
+let _cache = {};      // { slug: rowObject }
+let _cacheLoaded = false;
+
+async function sbThrow(r){
+  let msg='';
+  try{ const j=await r.clone().json(); msg=j.message||j.error||JSON.stringify(j); }catch{}
+  if(r.status===401||r.status===403) throw new Error('Permiso denegado ('+r.status+'). Revisá las políticas RLS en Supabase.');
+  if(r.status===404) throw new Error('Tabla no encontrada. Asegurate de haber ejecutado el SQL de configuración.');
+  if(r.status===409) throw new Error('Conflicto: ese slug ya existe.');
+  throw new Error('Error Supabase ('+r.status+')'+(msg?' — '+msg:''));
+}
+
+// Cargar todos los scripts (solo metadatos: slug, tn, up, s)
+async function binGetAll(force=false){
+  if(!force && _cacheLoaded) return _cache;
+  const r = await fetch(SB_URL+'/rest/v1/scripts?select=slug,tn,up,cr,s&order=up.desc', {
+    headers: SB_HEADERS()
+  });
+  if(!r.ok) await sbThrow(r);
+  const rows = await r.json();
+  _cache = {};
+  rows.forEach(row=>{ _cache[row.slug]=row; });
+  _cacheLoaded = true;
+  return _cache;
+}
+
+// Cargar un script completo (con contenido cifrado)
+async function binGetOne(slug){
+  const r = await fetch(SB_URL+'/rest/v1/scripts?slug=eq.'+encodeURIComponent(slug)+'&select=*&limit=1', {
+    headers: SB_HEADERS()
+  });
+  if(!r.ok) await sbThrow(r);
+  const rows = await r.json();
+  if(!rows.length) throw new Error('Script no encontrado.');
+  const row = rows[0];
+  if(_cache[slug]) Object.assign(_cache[slug], row);
+  else _cache[slug] = row;
+  return row;
+}
+
+// Insertar o actualizar un script completo (upsert via Supabase)
+async function binUpsert(row){
+  const r = await fetch(SB_URL+'/rest/v1/scripts', {
+    method: 'POST',
+    headers: {
+      ...SB_HEADERS(),
+      'Prefer': 'resolution=merge-duplicates,return=minimal'
+    },
+    body: JSON.stringify(row)
+  });
+  if(!r.ok) await sbThrow(r);
+  _cache[row.slug] = { ...(_cache[row.slug]||{}), ...row };
+  return row;
+}
+
+// Eliminar un script
+async function binDelete(slug){
+  const r = await fetch(SB_URL+'/rest/v1/scripts?slug=eq.'+encodeURIComponent(slug), {
+    method: 'DELETE',
+    headers: SB_HEADERS()
+  });
+  if(!r.ok) await sbThrow(r);
+  delete _cache[slug];
+}
+
+// Renombrar slug (insert nuevo + delete viejo)
+async function binRename(oldSlug, newSlug, newRow){
+  await binUpsert(newRow);
+  await binDelete(oldSlug);
+}
+
+// ══════════════════════════════════
+//  AUTH (100% cloud — Supabase)
+// ══════════════════════════════════
+async function hashPass(p){ return sha256(p + SALT + 'gate'); }
+
+// Lee el hash de la contraseña maestra desde Supabase (tabla config)
+async function getCloudHash(){
+  try{
+    const r = await fetch(SB_URL+'/rest/v1/config?key=eq.master_hash&select=val&limit=1', {
+      headers: SB_HEADERS()
+    });
+    if(!r.ok) return null;
+    const rows = await r.json();
+    return rows.length ? rows[0].val : null;
+  }catch{ return null; }
+}
+
+// Guarda el hash en Supabase (upsert: inserta o actualiza)
+async function setCloudHash(hash){
+  const r = await fetch(SB_URL+'/rest/v1/config', {
+    method: 'POST',
+    headers: {
+      ...SB_HEADERS(),
+      'Prefer': 'resolution=merge-duplicates,return=minimal'
+    },
+    body: JSON.stringify({ key: 'master_hash', val: hash })
+  });
+  if(!r.ok) await sbThrow(r);
+}
+
+async function hasAcct(){ return !!(await getCloudHash()); }
+
+async function doSetup(){
+  const p=_v('gsp'), p2=_v('gsp2'), er=$('gse'), sp=$('gss');
+  er.classList.remove('on');
+  if(p.length<6) return serr(er,'Mínimo 6 caracteres.');
+  if(p!==p2)     return serr(er,'Las contraseñas no coinciden.');
+  sp.classList.add('on');
+  try{
+    // Verificar que no exista ya una cuenta en la nube
+    const existing = await getCloudHash();
+    if(existing) throw new Error('Ya existe una contraseña maestra configurada. Usá "Entrar".');
+    await setCloudHash(await hashPass(p));
+    MPASS = p; await enterApp();
+  }catch(e){ serr(er, e.message); }
+  sp.classList.remove('on');
+}
+
+async function doLogin(){
+  const p=_v('glp'), er=$('gle'), sp=$('gls');
+  er.classList.remove('on');
+  if(!p) return serr(er,'Escribí tu contraseña.');
+  sp.classList.add('on');
+  try{
+    const cloudHash = await getCloudHash();
+    if(!cloudHash) throw new Error('No hay cuenta configurada. Recargá la página.');
+    if(await hashPass(p) !== cloudHash) throw new Error('Contraseña incorrecta.');
+    MPASS = p; await enterApp();
+  }catch(e){ serr(er, e.message); }
+  sp.classList.remove('on');
+}
+
+function reqLogout(){
+  openDlg('¿Cerrar sesión?','Tus scripts quedan guardados en la nube.','Salir',async()=>{
+    MPASS=null; activeSlug=null;
+    show('s-gate'); await initGate();
+  });
+}
+
+// ══════════════════════════════════
+//  SCRIPTS LAYER
+// ══════════════════════════════════
+// Estructura en JSONBin:
+// { "slug": { t: encTítulo(MPASS), c: encContenido(MPASS), s?: encPayload(scriptPass), cr, up } }
+
+async function getAllMeta(force=false){
+  const rec = await binGetAll(force);
+  return Object.values(rec)
+    .map(d=>({ slug:d.slug, title:d.tn||d.slug, updated:d.up||0, hasShare:!!d.s }))
+    .sort((a,b)=>b.updated-a.updated);
+}
+
+async function getContent(slug){
+  const row = await binGetOne(slug); // always fresh from DB
+  const content = row.p ? await aesDec(row.p, MPASS) : '';
+  return { title: row.tn || slug, content };
+}
+
+// Guarda script en la nube.
+// scriptPass !== null → también genera/actualiza el enlace de lectura (campo s)
+// oldSlug !== null    → renombra (borra viejo, crea nuevo)
+async function saveCloud(slug, title, content, scriptPass=null, oldSlug=null){
+  const now = Date.now();
+  const existing = _cache[oldSlug||slug] || _cache[slug] || {};
+
+  const encContent = await aesEnc(content, MPASS);
+
+  const row = {
+    slug:  slug,
+    tn:    title,
+    p:     encContent,
+    cr:    existing.cr || now,
+    up:    now,
+    s:     existing.s || null,
+  };
+
+  if(scriptPass !== null){
+    row.s = await aesEnc(JSON.stringify({title, content}), scriptPass);
+  }
+
+  if(oldSlug && oldSlug !== slug){
+    await binRename(oldSlug, slug, row);
+  } else {
+    await binUpsert(row);
+  }
+}
+
+async function delCloud(slug){
+  await binDelete(slug);
+}
+
+async function getShare(slug, scriptPass){
+  const row = await binGetOne(slug);
+  if(!row.s) throw new Error('Este script no tiene enlace activo. Generalo desde la app.');
+  try{
+    return JSON.parse(await aesDec(row.s, scriptPass));
+  }catch{
+    throw new Error('WRONG');
+  }
+}
+
+// ══════════════════════════════════
+//  APP UI
+// ══════════════════════════════════
+let activeSlug = null;
+let activeHasShare = false;
+
+async function enterApp(){
+  show('s-app');
+  renderEmpty();
+  // Load all script metadata on login — shows sidebar ASAP
+  try{
+    await binGetAll(true); // force fresh from Supabase
+    await refreshSb();
+  }catch(e){
+    const list = $('sb-list');
+    if(list) list.innerHTML =
+      '<div class="sb-empty" style="color:var(--danger);line-height:1.8;">'+
+      '⚠️ <strong>Error de conexión</strong><br><br>'+
+      esc(e.message)+'<br><br>'+
+      'Revisá la URL y la anon key de Supabase en Project Settings → API.'+
+      '</div>';
+  }
+}
+
+async function refreshSb(){
+  const list = $('sb-list');
+  if(!list) return;
+  list.innerHTML='';
+
+  let scripts;
+  try{ scripts = await getAllMeta(false); }
+  catch(e){
+    list.innerHTML='<div class="sb-empty" style="color:var(--danger)">Error de conexión.<br>'+e.message+'</div>';
+    return;
+  }
+
+  if(!scripts.length){
+    list.innerHTML='<div class="sb-empty">Sin scripts aún.<br>Creá el primero →</div>';
+    return;
+  }
+
+  scripts.forEach(s=>{
+    const el = document.createElement('div');
+    el.className = 'sbi' + (s.slug===activeSlug?' active':'');
+    el.dataset.slug = s.slug;
+    el.innerHTML =
+      '<div class="sbi-t">'+esc(s.title)+'</div>'+
+      '<div class="sbi-s">#'+esc(s.slug)+'</div>'+
+      '<div class="sbi-d">'+fmtd(s.updated)+(s.hasShare?' · 🔗':'')+'</div>';
+    el.onclick = ()=>openScript(s.slug, s.title, s.hasShare);
+    list.appendChild(el);
+  });
+}
+
+async function openScript(slug, titleHint, hasShare){
+  activeSlug = slug;
+  activeHasShare = hasShare;
+  closeSb();
+
+  $('main-pane').innerHTML = '<div class="ed-empty"><span class="ico">⏳</span><p>Cargando...</p></div>';
+
+  try{
+    const {title, content} = await getContent(slug);
+    renderEditor(slug, title||titleHint||slug, content, hasShare);
+    refreshSb(); // update sidebar in background
+  }catch(e){
+    $('main-pane').innerHTML = '<div class="ed-empty"><span class="ico">⚠️</span><p>'+esc(e.message)+'</p></div>';
+  }
+}
+
+function renderEmpty(){
+  activeSlug = null;
+  $('main-pane').innerHTML = `
+    <div class="ed-empty">
+      <span class="ico">📋</span>
+      <p>Seleccioná un script<br>o creá uno nuevo</p>
+      <button class="btn bg" onclick="newScript()">+ Nuevo script</button>
+    </div>
+  `;
+}
+
+function renderEditor(slug, title, content, hasShare){
+  activeSlug = slug; activeHasShare = hasShare;
+  $('main-pane').innerHTML = `
+    <div class="editor">
+
+      <div class="ed-2col" style="margin-bottom:11px">
+        <div class="fg" style="margin:0">
+          <div class="sec-lbl">Título del script</div>
+          <input type="text" id="ed-t" value="${esc(title)}" placeholder="Nombre del script">
+        </div>
+        <div class="fg" style="margin:0">
+          <div class="sec-lbl">URL personalizada</div>
+          <div class="slug-row">
+            <span class="slug-pfx">#</span>
+            <input type="text" id="ed-s" value="${esc(slug)}"
+              placeholder="apertura-fria" oninput="slugify(this)">
+          </div>
+          <div style="font-size:.6rem;color:var(--muted);margin-top:3px;">
+            Solo letras minúsculas, números y guiones
+          </div>
+        </div>
+      </div>
+
+      <div class="fg">
+        <div class="sec-lbl">Contenido del script</div>
+        <div style="font-size:.62rem;color:var(--muted);margin-bottom:5px;">
+          <span style="color:var(--acc)">#</span> secciones &nbsp;·&nbsp;
+          <span style="color:var(--acc)">→</span> o <span style="color:var(--acc)">-</span> ítems &nbsp;·&nbsp;
+          <span style="color:var(--acc)">---</span> separador
+        </div>
+        <div class="ctb">
+          <span class="ctb-lbl">Color</span>
+          <button class="cbtn cbtn-g" onclick="wrapColor('g')" title="Mi diálogo">● Yo</button>
+          <button class="cbtn cbtn-c" onclick="wrapColor('c')" title="Diálogo del cliente">● Cliente</button>
+          <button class="cbtn cbtn-y" onclick="wrapColor('y')" title="Resaltado importante">● Clave</button>
+          <button class="cbtn cbtn-r" onclick="wrapColor('r')" title="Objeción / alerta">● Objeción</button>
+          <div class="ctb-sep"></div>
+          <button class="cbtn cbtn-x" onclick="removeColor()" title="Quitar color del texto seleccionado">✕ Quitar</button>
+        </div>
+        <textarea class="ta ta-nc" id="ed-c" oninput="updCc()"
+          placeholder="# Apertura&#10;Hola, ¿hablo con [Nombre]?...&#10;&#10;# Preguntas clave&#10;→ ¿Ya trabaja con algún proveedor?&#10;→ ¿Cuál es su mayor desafío hoy?&#10;&#10;# Cierre&#10;¿Le parece si coordinamos una reunión esta semana?">${esc(content)}</textarea>
+        <div class="char-c"><span id="cc">0</span> caract.</div>
+      </div>
+
+      <div class="act-row">
+        <button class="btn bp" onclick="doSave()" id="btn-save">
+          <span class="spin" id="save-sp"></span>💾 Guardar
+        </button>
+        <button class="btn bg" onclick="toggleSP()">🔗 Generar enlace</button>
+        <button class="btn bd bsm" onclick="doDelete()">🗑</button>
+      </div>
+
+      <!-- SHARE PANEL -->
+      <div class="share-panel" id="sp-panel">
+        <div class="sp-ttl">Configurar enlace de lectura</div>
+
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:11px;line-height:1.65;">
+          Cada enlace tiene su <strong style="color:var(--text)">propia contraseña</strong>,
+          independiente de tu contraseña maestra.
+          El contenido se cifra antes de subirse — nadie puede leerlo sin la contraseña.
+        </div>
+
+        <div class="ed-2col-sm">
+          <div class="fg" style="margin:0">
+            <label>Contraseña para este enlace</label>
+            <input type="password" id="sp-p" placeholder="Contraseña de lectura..."
+              oninput="strength(this,'sp-sb')">
+            <div class="sbar"><div class="sbar-f" id="sp-sb"></div></div>
+          </div>
+          <div class="fg" style="margin:0">
+            <label>Confirmar contraseña</label>
+            <input type="password" id="sp-p2" placeholder="Repetir...">
+          </div>
+        </div>
+
+        ${hasShare ? `<div class="hint" style="margin-top:9px;">
+          ⚠ Ya existe un enlace para este script. Al generar uno nuevo, el anterior deja de funcionar.
+        </div>` : ''}
+
+        <button class="btn bg" style="margin-top:11px" onclick="doGenLink()">
+          <span class="spin" id="gl-sp"></span>Cifrar y generar enlace
+        </button>
+        <div class="err" id="gl-err"></div>
+
+        <!-- URL result -->
+        <div id="sp-result" style="display:none;margin-top:13px">
+          <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--acc);margin-bottom:7px;">
+            ✓ Enlace listo
+          </div>
+          <div class="url-row">
+            <div class="url-txt" id="gen-url"></div>
+            <button class="btn bg bsm" onclick="copyGU()">Copiar</button>
+          </div>
+          <div class="sp-note">
+            Podés escribir directamente
+            <strong id="short-url"></strong>
+            en cualquier navegador.
+            Solo necesitás la contraseña que acabás de crear.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  `;
+  updCc();
+}
+
+function newScript(){
+  activeSlug = '__new__'; activeHasShare = false;
+  closeSb();
+  $('main-pane').innerHTML = `
+    <div class="editor">
+
+      <div class="ed-2col" style="margin-bottom:11px">
+        <div class="fg" style="margin:0">
+          <div class="sec-lbl">Título del script</div>
+          <input type="text" id="ed-t" placeholder="Ej: Apertura llamada fría">
+        </div>
+        <div class="fg" style="margin:0">
+          <div class="sec-lbl">URL personalizada</div>
+          <div class="slug-row">
+            <span class="slug-pfx">#</span>
+            <input type="text" id="ed-s" placeholder="apertura-fria" oninput="slugify(this)">
+          </div>
+          <div style="font-size:.6rem;color:var(--muted);margin-top:3px;">
+            Ej: apertura-fria → tuapp.com/<strong style="color:var(--acc)">#apertura-fria</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="fg">
+        <div class="sec-lbl">Contenido</div>
+        <div style="font-size:.62rem;color:var(--muted);margin-bottom:5px;">
+          <span style="color:var(--acc)">#</span> secciones &nbsp;·&nbsp;
+          <span style="color:var(--acc)">→</span> o <span style="color:var(--acc)">-</span> ítems
+        </div>
+        <div class="ctb">
+          <span class="ctb-lbl">Color</span>
+          <button class="cbtn cbtn-g" onclick="wrapColor('g')">● Yo</button>
+          <button class="cbtn cbtn-c" onclick="wrapColor('c')">● Cliente</button>
+          <button class="cbtn cbtn-y" onclick="wrapColor('y')">● Clave</button>
+          <button class="cbtn cbtn-r" onclick="wrapColor('r')">● Objeción</button>
+          <div class="ctb-sep"></div>
+          <button class="cbtn cbtn-x" onclick="removeColor()">✕ Quitar</button>
+        </div>
+        <textarea class="ta ta-nc" id="ed-c" oninput="updCc()"
+          placeholder="# Apertura&#10;Hola, ¿hablo con [Nombre]?..."></textarea>
+        <div class="char-c"><span id="cc">0</span> caract.</div>
+      </div>
+
+      <div class="act-row">
+        <button class="btn bp" onclick="doSaveNew()" id="btn-save">
+          <span class="spin" id="save-sp"></span>💾 Crear script
+        </button>
+      </div>
+      <div class="err" id="new-err"></div>
+
+    </div>
+  `;
+  setTimeout(()=>$('ed-t')?.focus(), 50);
+}
+
+function slugify(inp){
+  inp.value = inp.value.toLowerCase().replace(/[^a-z0-9-]/g,'').replace(/--+/g,'-');
+}
+
+function toggleSP(){
+  $('sp-panel')?.classList.toggle('on');
+}
+
+async function doSave(){
+  const title   = (_v('ed-t')||'').trim();
+  const slug    = (_v('ed-s')||'').trim();
+  const content = _v('ed-c')||'';
+
+  if(!title) return toast('⚠ Poné un título.');
+  if(!slug)  return toast('⚠ Definí la URL del script.');
+  if(!/^[a-z0-9][a-z0-9-]*$/.test(slug)) return toast('⚠ URL inválida.');
+
+  const sp  = $('save-sp');
+  const btn = $('btn-save');
+  if(sp)  sp.classList.add('on');
+  if(btn) btn.disabled = true;
+  if(btn) btn.textContent = 'Guardando...';
+
+  const oldSlug = (activeSlug && activeSlug !== '__new__' && activeSlug !== slug) ? activeSlug : null;
+
+  try{
+    await saveCloud(slug, title, content, null, oldSlug);
+    activeSlug = slug;
+    toast('✓ Guardado correctamente');
+    refreshSb();
+  }catch(e){
+    // Show full error so we know exactly what failed
+    toast('❌ ' + e.message);
+    console.error('Save error:', e);
+  }finally{
+    const s = $('save-sp'); if(s) s.classList.remove('on');
+    const b = $('btn-save'); if(b){ b.disabled=false; b.innerHTML='<span class="spin" id="save-sp"></span>💾 Guardar'; }
+  }
+}
+
+async function doSaveNew(){
+  const title   = (_v('ed-t')||'').trim();
+  const slug    = (_v('ed-s')||'').trim();
+  const content = _v('ed-c')||'';
+  const er = $('new-err');
+  er.classList.remove('on');
+
+  if(!title) return serr(er,'Poné un título.');
+  if(!slug)  return serr(er,'Definí la URL del script (ej: apertura-fria).');
+  if(!/^[a-z0-9][a-z0-9-]*$/.test(slug)) return serr(er,'La URL solo puede tener letras minúsculas, números y guiones.');
+
+  const sp=$('save-sp'), btn=$('btn-save');
+  sp.classList.add('on'); btn.disabled=true;
+  try{
+    // Check slug conflict in cache (loaded on login) 
+    await binGetAll();
+    if(_cache[slug]){
+      sp.classList.remove('on'); btn.disabled=false;
+      return serr(er,'La URL "#'+slug+'" ya está en uso. Elegí otra.');
+    }
+    await saveCloud(slug, title, content);
+    activeSlug = slug;
+    await refreshSb();
+    renderEditor(slug, title, content, false);
+    toast('✓ Script creado');
+  }catch(e){
+    sp.classList.remove('on'); btn.disabled=false;
+    serr(er, '❌ ' + e.message);
+  }
+}
+
+async function doGenLink(){
+  const p1 = _v('sp-p')||'';
+  const p2 = _v('sp-p2')||'';
+  const er = $('gl-err');
+  const sp = $('gl-sp');
+  er.classList.remove('on');
+
+  if(!p1) return serr(er,'Definí una contraseña para el enlace.');
+  if(p1!==p2) return serr(er,'Las contraseñas no coinciden.');
+  if(p1.length<4) return serr(er,'Mínimo 4 caracteres.');
+
+  const title   = (_v('ed-t')||'').trim();
+  const slug    = (_v('ed-s')||'').trim();
+  const content = _v('ed-c')||'';
+
+  if(!slug || !title) return serr(er,'Guardá el script primero (con título y URL).');
+  if(!/^[a-z0-9][a-z0-9-]*$/.test(slug)) return serr(er,'URL inválida. Guardá el script primero.');
+
+  sp.classList.add('on');
+  try{
+    const oldSlug = (activeSlug && activeSlug!=='__new__' && activeSlug!==slug) ? activeSlug : null;
+    await saveCloud(slug, title, content, p1, oldSlug);
+    activeSlug = slug; activeHasShare = true;
+
+    const full  = `${location.origin}${location.pathname}#${slug}`;
+    const short = `${location.hostname}${location.pathname === '/' ? '' : location.pathname}#${slug}`;
+
+    $('gen-url').textContent = full;
+    $('short-url').textContent = short;
+    $('sp-result').style.display = 'block';
+
+    await refreshSb();
+    toast('✓ Enlace generado');
+  }catch(e){ serr(er, e.message); }
+  sp.classList.remove('on');
+}
+
+function copyGU(){
+  const u = $('gen-url')?.textContent;
+  if(u) navigator.clipboard.writeText(u).then(()=>toast('Enlace copiado ✓'));
+}
+
+function doDelete(){
+  if(!activeSlug || activeSlug==='__new__') return;
+  const slug = activeSlug;
+  openDlg('¿Eliminar script?','Esta acción no se puede deshacer.','Eliminar',async()=>{
+    try{
+      await delCloud(slug);
+      activeSlug=null;
+      await refreshSb();
+      renderEmpty();
+      toast('Script eliminado');
+    }catch(e){ toast('Error: '+e.message); }
+  });
+}
+
+function updCc(){
+  const ta=$('ed-c'), c=$('cc');
+  if(ta&&c) c.textContent=(ta.value.length).toLocaleString('es-AR');
+}
+
+// ══════════════════════════════════
+//  READER
+// ══════════════════════════════════
+let rFont=15, rTxt='', rSlug='';
+
+async function initReader(slug){
+  rSlug = slug;
+  show('s-reader');
+  $('r-gate').style.display='flex';
+  $('r-view').style.display='none';
+  $('r-slug-lbl').textContent = '#' + slug;
+  $('rpe').classList.remove('on');
+  $('rpass').value = '';
+  setTimeout(()=>$('rpass').focus(), 80);
+}
+
+async function doReaderDecrypt(){
+  const pass = _v('rpass');
+  const er=$('rpe'), sp=$('rps');
+  er.classList.remove('on');
+  if(!pass) return serr(er,'Escribí la contraseña.');
+  sp.classList.add('on');
+  try{
+    const data = await getShare(rSlug, pass);
+    rTxt = data.content||'';
+    $('r-title').textContent = data.title || rSlug;
+    $('sout').innerHTML = renderScript(rTxt);
+    $('sout').style.fontSize = rFont + 'px';
+    $('r-gate').style.display='none';
+    $('r-view').style.display='flex';
+    $('r-view').style.flexDirection='column';
+    $('r-view').style.flex='1';
+    $('r-view').style.minHeight='0';
+    setTimeout(buildNav, 50);
+  }catch(e){
+    serr(er, e.message==='WRONG' ? 'Contraseña incorrecta.' : e.message);
+  }
+  sp.classList.remove('on');
+}
+
+function colorize(text){
+  // Parse {g}...{/g}, {c}...{/c}, {y}...{/y}, {r}...{/r} inline tags
+  return text
+    .replace(/\{g\}(.*?)\{\/g\}/g, '<span class="ct-g">$1</span>')
+    .replace(/\{c\}(.*?)\{\/c\}/g, '<span class="ct-c">$1</span>')
+    .replace(/\{y\}(.*?)\{\/y\}/g, '<span class="ct-y">$1</span>')
+    .replace(/\{r\}(.*?)\{\/r\}/g, '<span class="ct-r">$1</span>');
+}
+
+function renderScript(text){
+  let html=''; let secIdx=0;
+  (text||'').split('\n').forEach(line=>{
+    if(/^#+\s/.test(line)){
+      const label = esc(line.replace(/^#+\s*/,''));
+      html+='<div class="sh" id="sec-'+secIdx+'" data-sec="'+secIdx+'">'+label+'</div>';
+      secIdx++;
+    } else if(/^-{3,}$|^={3,}$/.test(line.trim())){
+      html+=`<hr class="shr">`;
+    } else if(/^(→|-|•)\s/.test(line)){
+      html+='<div class="sbul"><span class="smark">→</span><span>'+colorize(esc(line.replace(/^(→|-|•)\s*/,'')))+'</span></div>';
+    } else if(line.trim()===''){
+      html+=`<div class="sg"></div>`;
+    } else {
+      html+='<p class="sp2">'+colorize(esc(line))+'</p>';
+    }
+  });
+  return html;
+}
+
+function wrapColor(tag){
+  const ta = $('ed-c');
+  if(!ta) return;
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  if(s === e){ toast('Seleccioná el texto que querés colorear primero.'); return; }
+  const selected = ta.value.slice(s, e);
+  const wrapped  = '{'+tag+'}'+selected+'{/'+tag+'}';
+  ta.value = ta.value.slice(0,s) + wrapped + ta.value.slice(e);
+  ta.selectionStart = s;
+  ta.selectionEnd   = s + wrapped.length;
+  ta.focus();
+  updCc();
+}
+
+function removeColor(){
+  const ta = $('ed-c');
+  if(!ta) return;
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  if(s === e){ toast('Seleccioná el texto que querés limpiar primero.'); return; }
+  const chunk = ta.value.slice(s, e);
+  const clean = chunk.replace(/\{[a-z]+\}|\{\/[a-z]+\}/g, '');
+  ta.value = ta.value.slice(0,s) + clean + ta.value.slice(e);
+  ta.selectionStart = s;
+  ta.selectionEnd   = s + clean.length;
+  ta.focus();
+  updCc();
+}
+
+function buildNav(){
+  const drop  = $('rnav-drop');
+  const count = $('rnav-count');
+  const empty = $('rnav-empty');
+  if(!drop) return;
+
+  const secs = document.querySelectorAll('#sout .sh');
+  count.textContent = secs.length;
+
+  if(!secs.length){
+    drop.innerHTML = '<div class="rnav-empty">Sin secciones (usá # para crearlas)</div>';
+    return;
+  }
+
+  drop.innerHTML = '';
+  secs.forEach((el, i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'rnav-item';
+    btn.innerHTML = '<span class="rnav-num">'+(i+1)+'</span><span>'+el.textContent+'</span>';
+    btn.onclick = ()=>{
+      el.scrollIntoView({behavior:'smooth', block:'start'});
+      // close nav after jump
+      $('rnav-drop').classList.remove('open');
+      $('rnav-arr').classList.remove('open');
+    };
+    drop.appendChild(btn);
+  });
+}
+
+function toggleNav(){
+  const drop = $('rnav-drop');
+  const arr  = $('rnav-arr');
+  if(!drop) return;
+  drop.classList.toggle('open');
+  arr.classList.toggle('open');
+}
+
+function adjFont(d){
+  rFont = Math.max(12, Math.min(26, rFont+d));
+  $('sout').style.fontSize = rFont+'px';
+}
+
+function updProg(){
+  const b=$('rbody');
+  const p = b.scrollTop/(b.scrollHeight-b.clientHeight)*100;
+  $('rpf').style.width = Math.min(100, p||0)+'%';
+}
+
+function copyRTxt(){
+  navigator.clipboard.writeText(rTxt).then(()=>toast('Texto copiado ✓'));
+}
+
+// ══════════════════════════════════
+//  ROUTING
+// ══════════════════════════════════
+async function route(){
+  const hash = location.hash.slice(1);
+  if(!IS_CFG){ show('s-noconfig'); return; }
+  if(hash && hash!=='app'){
+    initReader(decodeURIComponent(hash));
+  } else {
+    show('s-gate'); await initGate();
+  }
+}
+
+async function initGate(){
+  // Mostrar loading, ocultar formularios
+  const gl = $('g-loading');
+  $('g-setup').style.display='none';
+  $('g-login').style.display='none';
+  if(gl) gl.style.display='block';
+
+  try{
+    const acct = await hasAcct();
+    if(gl) gl.style.display='none';
+    if(acct){
+      $('g-login').style.display='block';
+      setTimeout(()=>$('glp').focus(),55);
+    }else{
+      $('g-setup').style.display='block';
+      setTimeout(()=>$('gsp').focus(),55);
+    }
+  }catch(e){
+    if(gl) gl.innerHTML =
+      '<div style="color:var(--danger);font-size:.75rem;line-height:1.7;text-align:center;">'+
+      '⚠️ No se pudo conectar con Supabase<br><br>'+
+      '<span style="color:var(--muted);font-size:.68rem;">'+esc(e.message)+'</span><br><br>'+
+      '<button class="btn bg bsm" onclick="initGate()">Reintentar</button></div>';
+  }
+}
+
+window.addEventListener('hashchange', route);
+
+// ══════════════════════════════════
+//  UTILS
+// ══════════════════════════════════
+function $(id){ return document.getElementById(id); }
+function _v(id){ return ($(id)?.value||''); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtd(ts){ return new Date(ts).toLocaleDateString('es-AR',{day:'2-digit',month:'short'}); }
+function serr(el,m){ el.textContent=m; el.classList.add('on'); }
+
+let _tt;
+function toast(m){
+  const t=$('toast'); t.textContent=m; t.classList.add('on');
+  clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('on'),2600);
+}
+
+function strength(inp,bid){
+  const p=inp.value;
+  const sc=Math.min(4,(p.length>5?1:0)+(p.length>10?1:0)+(/[A-Z]/.test(p)&&/[0-9]/.test(p)?1:0)+(/[^A-Za-z0-9]/.test(p)?1:0));
+  const cols=['#ff4466','#ff8844','#ffcc44','#88dd00','#00ff88'];
+  const f=$(bid); f.style.width=(sc*25)+'%'; f.style.background=cols[sc];
+}
+
+let _dlgCb=null;
+function openDlg(t,m,lbl,cb){
+  $('dlg-t').textContent=t; $('dlg-m').textContent=m; $('dlg-ok').textContent=lbl;
+  _dlgCb=cb; $('dlg-bg').classList.add('on');
+}
+function closeDlg(){ $('dlg-bg').classList.remove('on'); }
+$('dlg-ok').onclick=()=>{ closeDlg(); _dlgCb&&_dlgCb(); };
+
+function show(id){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+  $(id)?.classList.add('on');
+}
+
+function toggleSb(){ $('sb').classList.toggle('open'); }
+function closeSb(){ $('sb').classList.remove('open'); }
+$('main-pane').addEventListener('click', closeSb);
+
+// ── INIT ──
+route().catch(e=>{
+  document.getElementById('s-gate')?.classList.add('on');
+  const gl = document.getElementById('g-loading');
+  if(gl) gl.innerHTML =
+    '<div style="color:var(--danger);font-size:.75rem;line-height:1.7;text-align:center;">'+
+    '⚠️ Error al iniciar<br><br>'+
+    '<span style="color:var(--muted);font-size:.68rem;">'+(e&&e.message||'Error desconocido')+'</span><br><br>'+
+    '<button class="btn bg bsm" onclick="location.reload()">Recargar</button></div>';
+});
+</script>
+</body>
+</html>
