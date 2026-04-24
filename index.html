@@ -1361,12 +1361,12 @@ async function doReaderDecrypt(){
 }
 
 function colorize(text){
-  // Parse {g}...{/g}, {c}...{/c}, {y}...{/y}, {r}...{/r} inline tags
+  // Acepta ambos formatos: {g}...{g} y {g}...{/g}
   return text
-    .replace(/\{g\}(.*?)\{\/g\}/g, '<span class="ct-g">$1</span>')
-    .replace(/\{c\}(.*?)\{\/c\}/g, '<span class="ct-c">$1</span>')
-    .replace(/\{y\}(.*?)\{\/y\}/g, '<span class="ct-y">$1</span>')
-    .replace(/\{r\}(.*?)\{\/r\}/g, '<span class="ct-r">$1</span>');
+    .replace(/\{g\}([\s\S]*?)\{\/?g\}/g, '<span class="ct-g">$1</span>')
+    .replace(/\{c\}([\s\S]*?)\{\/?c\}/g, '<span class="ct-c">$1</span>')
+    .replace(/\{y\}([\s\S]*?)\{\/?y\}/g, '<span class="ct-y">$1</span>')
+    .replace(/\{r\}([\s\S]*?)\{\/?r\}/g, '<span class="ct-r">$1</span>');
 }
 
 function renderScript(text){
